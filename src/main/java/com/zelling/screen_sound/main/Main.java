@@ -1,11 +1,25 @@
 package com.zelling.screen_sound.main;
 
+import com.zelling.screen_sound.models.Song;
+import com.zelling.screen_sound.repository.AlbumRepository;
+import com.zelling.screen_sound.repository.ArtistRepository;
+import com.zelling.screen_sound.repository.SongRepository;
 import com.zelling.screen_sound.utils.UI;
 
 import java.util.Scanner;
 
 public class Main {
     Scanner scanner = new Scanner(System.in);
+    private SongRepository songRepository;
+    private ArtistRepository artistRepository;
+    private AlbumRepository albumRepository;
+
+    public Main(SongRepository songRepository, ArtistRepository artistRepository, AlbumRepository albumRepository){
+        this.songRepository = songRepository;
+        this.artistRepository = artistRepository;
+        this.albumRepository = albumRepository;
+    }
+
     public void App(){
         UI ui = new UI();
         int menuOption = 1;
@@ -43,7 +57,7 @@ public class Main {
     }
 
     private void registerArtist(){
-        System.out.println("Main.registerArtist");
+
     }
 
     public void registerSong(){
