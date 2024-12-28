@@ -9,8 +9,11 @@ public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(unique = true)
     private String title;
     private Artist artist;
-    @ManyToOne
+    @ManyToOne(targetEntity = Song.class)
     private List<Song> songList;
+
+    public Album(){};
 }

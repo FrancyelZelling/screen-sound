@@ -1,5 +1,7 @@
 package com.zelling.screen_sound.models;
 
+import jakarta.persistence.Entity;
+
 public enum ArtistType {
     SOLO("single", "solo"),
     DUO("duo", "dupla"),

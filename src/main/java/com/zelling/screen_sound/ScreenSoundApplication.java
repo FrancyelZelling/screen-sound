@@ -10,7 +10,6 @@ public class ScreenSoundApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ScreenSoundApplication.class, args);
-
 	}
 
 	@Override
