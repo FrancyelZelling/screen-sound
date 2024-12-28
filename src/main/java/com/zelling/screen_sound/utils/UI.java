@@ -13,6 +13,7 @@ public class UI {
                 3 - Listar Músicas
                 4 - Buscar músicas por artistas
                 5 - Pesquisar dados sobre um artista
+                6 - Cadastrar álbum
                 
                 0 - Sair
                 

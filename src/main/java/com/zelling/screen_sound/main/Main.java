@@ -1,13 +1,13 @@
 package com.zelling.screen_sound.main;
 
+import com.zelling.screen_sound.models.Album;
 import com.zelling.screen_sound.models.Artist;
-import com.zelling.screen_sound.models.ArtistType;
-import com.zelling.screen_sound.models.Song;
 import com.zelling.screen_sound.repository.AlbumRepository;
 import com.zelling.screen_sound.repository.ArtistRepository;
 import com.zelling.screen_sound.repository.SongRepository;
 import com.zelling.screen_sound.utils.UI;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
@@ -46,6 +46,9 @@ public class Main {
                 case 5:
                     findAboutArtist();
                     break;
+                case 6:
+                    registerAlbum();
+                    break;
                 case 0:
                     System.out.println("\nExiting...");
                     break;
@@ -57,7 +60,7 @@ public class Main {
 
     }
 
-    private void registerArtist(){
+    private Optional<Artist> registerArtist(){
         ui.optionInput("Type artist name");
         var artistName = scanner.nextLine();
 
@@ -71,6 +74,31 @@ public class Main {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create artist");
         }
+
+        return Optional.of(artist);
+    }
+
+    public void registerAlbum(){
+        ui.optionInput("type name of the album");
+        var albumName = scanner.nextLine();
+
+        ui.optionInput("type name of the artist:");
+        var artistName = scanner.nextLine();
+
+        var artistResult = artistRepository.findByNameContainsIgnoreCase(artistName);
+        System.out.println(artistResult.isPresent());
+
+        if(artistResult.isPresent()){
+            var album = new Album(albumName,artistResult.get());
+            albumRepository.save(album);
+        } else{
+            ui.separatorWithText("artist not found, creating new artist");
+            var createdArtist = registerArtist();
+            var album = new Album(artistName, createdArtist.get());
+            albumRepository.save(album);
+        }
+
+        ui.separatorWithText("Album registered");
     }
 
     public void registerSong(){

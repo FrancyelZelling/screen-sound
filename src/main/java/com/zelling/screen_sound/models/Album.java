@@ -11,9 +11,15 @@ public class Album {
     private long id;
     @Column(unique = true)
     private String title;
+    @ManyToOne
     private Artist artist;
     @ManyToOne(targetEntity = Song.class)
     private List<Song> songList;
 
     public Album(){};
+
+    public Album(String title, Artist artist){
+        this.title = title;
+        this.artist = artist;
+    }
 }
