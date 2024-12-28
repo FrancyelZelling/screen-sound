@@ -32,4 +32,53 @@ public class Artist implements Serializable {
     private List<Song> songList;
 
     public Artist(){};
+    public Artist(String name, String artistType){
+        this.name = name;
+        this.artistType = ArtistType.fromText(artistType);
+    };
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ArtistType getArtistType() {
+        return artistType;
+    }
+
+    public void setArtistType(ArtistType artistType) {
+        this.artistType = artistType;
+    }
+
+    public List<Album> getAlbunsList() {
+        return albunsList;
+    }
+
+    public void setAlbunsList(List<Album> albunsList) {
+        this.albunsList = albunsList;
+    }
+
+    public List<Song> getSongList() {
+        return songList;
+    }
+
+    public void setSongList(List<Song> songList) {
+        this.songList = songList;
+    }
+
+    @Override
+    public String toString(){
+        return "name:" + this.name + ", type: " + this.artistType;
+    }
 }

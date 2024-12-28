@@ -1,5 +1,7 @@
 package com.zelling.screen_sound.main;
 
+import com.zelling.screen_sound.models.Artist;
+import com.zelling.screen_sound.models.ArtistType;
 import com.zelling.screen_sound.models.Song;
 import com.zelling.screen_sound.repository.AlbumRepository;
 import com.zelling.screen_sound.repository.ArtistRepository;
@@ -13,6 +15,7 @@ public class Main {
     private SongRepository songRepository;
     private ArtistRepository artistRepository;
     private AlbumRepository albumRepository;
+    private UI ui = new UI();
 
     public Main(SongRepository songRepository, ArtistRepository artistRepository, AlbumRepository albumRepository){
         this.songRepository = songRepository;
@@ -21,9 +24,7 @@ public class Main {
     }
 
     public void App(){
-        UI ui = new UI();
         int menuOption = 1;
-
 
         while(menuOption != 0){
             ui.createMenu();
@@ -57,7 +58,19 @@ public class Main {
     }
 
     private void registerArtist(){
+        ui.optionInput("Type artist name");
+        var artistName = scanner.nextLine();
 
+        ui.optionInput("Type artist type(Solo/Duo/Band/Group):");
+        var artistType = scanner.nextLine();
+
+        var artist = new Artist(artistName, artistType);
+
+        try{
+            artistRepository.save(artist);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create artist");
+        }
     }
 
     public void registerSong(){

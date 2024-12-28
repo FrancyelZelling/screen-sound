@@ -20,6 +20,14 @@ public class UI {
         );
     }
 
+    public void optionInput(String text){
+        System.out.printf(
+                """
+                \n ***** %s ***** \n
+                """, text
+        );
+    }
+
     public void separatorWithText(String text){
         System.out.printf(
                 """
