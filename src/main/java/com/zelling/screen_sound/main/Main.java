@@ -2,12 +2,12 @@ package com.zelling.screen_sound.main;
 
 import com.zelling.screen_sound.models.Album;
 import com.zelling.screen_sound.models.Artist;
+import com.zelling.screen_sound.models.Song;
 import com.zelling.screen_sound.repository.AlbumRepository;
 import com.zelling.screen_sound.repository.ArtistRepository;
 import com.zelling.screen_sound.repository.SongRepository;
 import com.zelling.screen_sound.utils.UI;
 
-import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
@@ -17,20 +17,20 @@ public class Main {
     private AlbumRepository albumRepository;
     private UI ui = new UI();
 
-    public Main(SongRepository songRepository, ArtistRepository artistRepository, AlbumRepository albumRepository){
+    public Main(SongRepository songRepository, ArtistRepository artistRepository, AlbumRepository albumRepository) {
         this.songRepository = songRepository;
         this.artistRepository = artistRepository;
         this.albumRepository = albumRepository;
     }
 
-    public void App(){
+    public void App() {
         int menuOption = 1;
 
-        while(menuOption != 0){
+        while (menuOption != 0) {
             ui.createMenu();
             menuOption = readInt();
 
-            switch (menuOption){
+            switch (menuOption) {
                 case 1:
                     registerArtist();
                     break;
@@ -56,68 +56,112 @@ public class Main {
                     System.out.println("\nInvalid option, please select a valid one");
             }
         }
-
-
     }
 
-    private Optional<Artist> registerArtist(){
+    private Artist registerArtist() {
         ui.optionInput("Type artist name");
         var artistName = scanner.nextLine();
+        var findArtist = artistRepository.findByNameContainsIgnoreCase(artistName);
+        Artist artist;
 
-        ui.optionInput("Type artist type(Solo/Duo/Band/Group):");
-        var artistType = scanner.nextLine();
-
-        var artist = new Artist(artistName, artistType);
-
-        try{
+        if (findArtist.isPresent()) {
+            ui.separatorWithText("artist already exists");
+            return artist = findArtist.get();
+        } else {
+            ui.optionInput("Type artist type(Solo/Duo/Band/Group):");
+            var artistType = scanner.nextLine();
+            artist = new Artist(artistName, artistType);
             artistRepository.save(artist);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create artist");
+            return artist;
         }
-
-        return Optional.of(artist);
     }
 
-    public void registerAlbum(){
+    public Artist findArtist() {
+        ui.optionInput("type name of the artist to search");
+        var artistInput = scanner.nextLine();
+        Artist artist;
+
+        var artistFind = artistRepository.findByNameContainsIgnoreCase(artistInput);
+        if (artistFind.isEmpty()) {
+            ui.separatorWithText("artist not found, creating one...");
+            artist = registerArtist();
+        } else {
+            artist = artistFind.get();
+        }
+
+        return artist;
+    }
+
+    public Album registerAlbum() {
         ui.optionInput("type name of the album");
         var albumName = scanner.nextLine();
+        var findAlbum = albumRepository.findByTitleContainsIgnoreCase(albumName);
+        Album album;
 
-        ui.optionInput("type name of the artist:");
-        var artistName = scanner.nextLine();
+        if (findAlbum.isPresent()) {
+            ui.separatorWithText("album already exists");
+            return album = findAlbum.get();
+        } else {
+            var artist = findArtist();
 
-        var artistResult = artistRepository.findByNameContainsIgnoreCase(artistName);
-        System.out.println(artistResult.isPresent());
-
-        if(artistResult.isPresent()){
-            var album = new Album(albumName,artistResult.get());
+            album = new Album(albumName, artist);
             albumRepository.save(album);
-        } else{
-            ui.separatorWithText("artist not found, creating new artist");
-            var createdArtist = registerArtist();
-            var album = new Album(artistName, createdArtist.get());
-            albumRepository.save(album);
+
+            ui.separatorWithText("Album registered");
+            return album;
+        }
+    }
+
+    public Album findAlbum() {
+        ui.optionInput("type name of the album to search");
+        var albumName = scanner.nextLine();
+        var albumFind = albumRepository.findByTitleContainsIgnoreCase(albumName);
+        Album album;
+
+        if (albumFind.isEmpty()) {
+            ui.optionInput("album not found, creating one...");
+            album = registerAlbum();
+        } else {
+            album = albumFind.get();
         }
 
-        ui.separatorWithText("Album registered");
+        return album;
     }
 
-    public void registerSong(){
-        System.out.println("Main.registerSong");
+    public Song registerSong() {
+        ui.optionInput("type name of the song");
+        var songName = scanner.nextLine();
+
+        var findSong = songRepository.findByNameContainsIgnoreCase(songName);
+        if (findSong.isPresent()) {
+            ui.separatorWithText("song already exists");
+            return findSong.get();
+        } else {
+            var artist = findArtist();
+            var album = findAlbum();
+
+            var song = new Song(songName, artist);
+            song.setAlbum(album);
+            songRepository.save(song);
+
+            ui.separatorWithText("Song registered");
+            return song;
+        }
     }
 
-    private void listSongs(){
+    private void listSongs() {
         System.out.println("Main.listSongs");
     }
 
-    private void searchSongsByArtist(){
+    private void searchSongsByArtist() {
         System.out.println("Main.searchSongsByArtist");
     }
 
-    private void findAboutArtist(){
+    private void findAboutArtist() {
         System.out.println("Main.findAboutArtist");
     }
 
-    private int readInt(){
+    private int readInt() {
         var intValue = scanner.nextInt();
         scanner.nextLine();
 
