@@ -3,24 +3,18 @@ package com.zelling.screen_sound.main;
 import com.zelling.screen_sound.models.Album;
 import com.zelling.screen_sound.models.Artist;
 import com.zelling.screen_sound.models.Song;
-import com.zelling.screen_sound.repository.AlbumRepository;
 import com.zelling.screen_sound.repository.ArtistRepository;
-import com.zelling.screen_sound.repository.SongRepository;
 import com.zelling.screen_sound.utils.UI;
 
 import java.util.Scanner;
 
 public class Main {
     Scanner scanner = new Scanner(System.in);
-    private SongRepository songRepository;
-    private ArtistRepository artistRepository;
-    private AlbumRepository albumRepository;
-    private UI ui = new UI();
+    private final ArtistRepository artistRepository;
+    private final UI ui = new UI();
 
-    public Main(SongRepository songRepository, ArtistRepository artistRepository, AlbumRepository albumRepository) {
-        this.songRepository = songRepository;
+    public Main(ArtistRepository artistRepository) {
         this.artistRepository = artistRepository;
-        this.albumRepository = albumRepository;
     }
 
     public void App() {
@@ -35,10 +29,10 @@ public class Main {
                     registerArtist();
                     break;
                 case 2:
-                    registerSong();
+//                    registerSong();
                     break;
                 case 3:
-                    listSongs();
+//                    listSongs();
                     break;
                 case 4:
                     searchSongsByArtist();
@@ -95,63 +89,83 @@ public class Main {
     public Album registerAlbum() {
         ui.optionInput("type name of the album");
         var albumName = scanner.nextLine();
-        var findAlbum = albumRepository.findByTitleContainsIgnoreCase(albumName);
+//        var findAlbum = artistRepository.findAlbum(albumName);
         Album album;
 
-        if (findAlbum.isPresent()) {
-            ui.separatorWithText("album already exists");
-            return album = findAlbum.get();
-        } else {
-            var artist = findArtist();
+        var artist = findArtist();
 
-            album = new Album(albumName, artist);
-            albumRepository.save(album);
+        album = new Album(albumName, artist);
+        artist.addAlbum(album);
 
-            ui.separatorWithText("Album registered");
-            return album;
-        }
-    }
+        artistRepository.save(artist);
 
-    public Album findAlbum() {
-        ui.optionInput("type name of the album to search");
-        var albumName = scanner.nextLine();
-        var albumFind = albumRepository.findByTitleContainsIgnoreCase(albumName);
-        Album album;
-
-        if (albumFind.isEmpty()) {
-            ui.optionInput("album not found, creating one...");
-            album = registerAlbum();
-        } else {
-            album = albumFind.get();
-        }
-
+        ui.separatorWithText("Album registered");
         return album;
+//        if (findAlbum.isPresent()) {
+//            ui.separatorWithText("album already exists");
+//            return album = findAlbum.get();
+//        } else {
+//            var artist = findArtist();
+//
+//            album = new Album(albumName, artist);
+//            artist.addAlbum(album);
+//
+//            artistRepository.save(artist);
+//
+//            ui.separatorWithText("Album registered");
+//            return album;
+//        }
     }
 
-    public Song registerSong() {
-        ui.optionInput("type name of the song");
-        var songName = scanner.nextLine();
+//    public Album findAlbum() {
+//        ui.optionInput("type name of the album to search");
+//        var albumName = scanner.nextLine();
+//        var albumFind = artistRepository.findAlbum(albumName);
+//        Album album;
+//
+//        if (albumFind.isEmpty()) {
+//            ui.optionInput("album not found, creating one...");
+//            album = registerAlbum();
+//        } else {
+//            album = albumFind.get();
+//        }
+//
+//        return album;
+//    }
 
-        var findSong = songRepository.findByNameContainsIgnoreCase(songName);
-        if (findSong.isPresent()) {
-            ui.separatorWithText("song already exists");
-            return findSong.get();
-        } else {
-            var artist = findArtist();
-            var album = findAlbum();
+//    public Song registerSong() {
+//        ui.optionInput("type name of the song");
+//        var songName = scanner.nextLine();
+//
+//        var findSong = artistRepository.findSong(songName);
+//        if (findSong.isPresent()) {
+//            ui.separatorWithText("song already exists");
+//            return findSong.get();
+//        } else {
+//            var artist = findArtist();
+//            var album = findAlbum();
+//
+//            var song = new Song(songName, artist);
+//            song.setAlbum(album);
+//            album.addSong(song);
+//
+//            artist.addAlbum(album);
+//            artist.addSong(song);
+//            artistRepository.save(artist);
+//
+//            ui.separatorWithText("Song registered");
+//            return song;
+//        }
+//    }
 
-            var song = new Song(songName, artist);
-            song.setAlbum(album);
-            songRepository.save(song);
-
-            ui.separatorWithText("Song registered");
-            return song;
-        }
-    }
-
-    private void listSongs() {
-        System.out.println("Main.listSongs");
-    }
+//    private void listSongs() {
+//        var songs = artistRepository.findAllSongs();
+//        if (songs.isEmpty()){
+//            ui.separatorWithText("cannot find songs");
+//        }else {
+//            songs.forEach(System.out::println);
+//        }
+//    }
 
     private void searchSongsByArtist() {
         System.out.println("Main.searchSongsByArtist");

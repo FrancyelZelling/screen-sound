@@ -4,17 +4,21 @@ import jakarta.persistence.*;
 
 @Entity
 public class Song {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(unique = true)
     private String name;
+
     @ManyToOne
     private Artist artist;
-    @ManyToOne
+
+    @ManyToOne(targetEntity = Album.class)
     private Album album;
 
-    public Song(){};
+    public Song() {}
 
     public Song(String songName, Artist artist) {
         this.name = songName;
@@ -51,5 +55,17 @@ public class Song {
 
     public void setAlbum(Album album) {
         this.album = album;
+    }
+
+    @Override
+    public String toString() {
+        return (
+            "name: " +
+            this.name +
+            ", artist: " +
+            this.artist +
+            ", album: " +
+            this.album
+        );
     }
 }

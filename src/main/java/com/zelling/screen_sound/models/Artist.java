@@ -3,6 +3,7 @@ package com.zelling.screen_sound.models;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,14 +23,14 @@ public class Artist implements Serializable {
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
-    private List<Album> albunsList;
+    private List<Album> albunsList = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "artist",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
-    private List<Song> songList;
+    private List<Song> songList = new ArrayList<>();
 
     public Artist(){};
     public Artist(String name, String artistType){
@@ -73,8 +74,14 @@ public class Artist implements Serializable {
         return songList;
     }
 
-    public void setSongList(List<Song> songList) {
-        this.songList = songList;
+    public List<Song> addSong(Song song) {
+        this.songList.add(song);
+        return this.songList;
+    }
+
+    public List<Album> addAlbum(Album album) {
+        this.albunsList.add(album);
+        return this.albunsList;
     }
 
     @Override

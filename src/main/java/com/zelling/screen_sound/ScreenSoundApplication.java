@@ -11,9 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ScreenSoundApplication implements CommandLineRunner {
-	@Autowired private SongRepository songRepository;
 	@Autowired private ArtistRepository artistRepository;
-	@Autowired private AlbumRepository albumRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ScreenSoundApplication.class, args);
@@ -21,7 +19,7 @@ public class ScreenSoundApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Main main = new Main(songRepository, artistRepository, albumRepository);
+		Main main = new Main( artistRepository);
 		main.App();
 	}
 }
