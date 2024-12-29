@@ -3,18 +3,28 @@ package com.zelling.screen_sound.main;
 import com.zelling.screen_sound.models.Album;
 import com.zelling.screen_sound.models.Artist;
 import com.zelling.screen_sound.models.Song;
+import com.zelling.screen_sound.repository.AlbumRepository;
 import com.zelling.screen_sound.repository.ArtistRepository;
+import com.zelling.screen_sound.repository.SongRepository;
 import com.zelling.screen_sound.utils.UI;
-
 import java.util.Scanner;
 
 public class Main {
+
     Scanner scanner = new Scanner(System.in);
     private final ArtistRepository artistRepository;
+    private final AlbumRepository albumRepository;
+    private final SongRepository songRepository;
     private final UI ui = new UI();
 
-    public Main(ArtistRepository artistRepository) {
+    public Main(
+        ArtistRepository artistRepository,
+        AlbumRepository albumRepository,
+        SongRepository songRepository
+    ) {
         this.artistRepository = artistRepository;
+        this.albumRepository = albumRepository;
+        this.songRepository = songRepository;
     }
 
     public void App() {
@@ -29,10 +39,10 @@ public class Main {
                     registerArtist();
                     break;
                 case 2:
-//                    registerSong();
+                    registerSong();
                     break;
                 case 3:
-//                    listSongs();
+                    listSongs();
                     break;
                 case 4:
                     searchSongsByArtist();
@@ -47,7 +57,9 @@ public class Main {
                     System.out.println("\nExiting...");
                     break;
                 default:
-                    System.out.println("\nInvalid option, please select a valid one");
+                    System.out.println(
+                        "\nInvalid option, please select a valid one"
+                    );
             }
         }
     }
@@ -55,7 +67,9 @@ public class Main {
     private Artist registerArtist() {
         ui.optionInput("Type artist name");
         var artistName = scanner.nextLine();
-        var findArtist = artistRepository.findByNameContainsIgnoreCase(artistName);
+        var findArtist = artistRepository.findByNameContainsIgnoreCase(
+            artistName
+        );
         Artist artist;
 
         if (findArtist.isPresent()) {
@@ -75,7 +89,9 @@ public class Main {
         var artistInput = scanner.nextLine();
         Artist artist;
 
-        var artistFind = artistRepository.findByNameContainsIgnoreCase(artistInput);
+        var artistFind = artistRepository.findByNameContainsIgnoreCase(
+            artistInput
+        );
         if (artistFind.isEmpty()) {
             ui.separatorWithText("artist not found, creating one...");
             artist = registerArtist();
@@ -87,88 +103,104 @@ public class Main {
     }
 
     public Album registerAlbum() {
+        Album album;
         ui.optionInput("type name of the album");
         var albumName = scanner.nextLine();
-//        var findAlbum = artistRepository.findAlbum(albumName);
-        Album album;
-
+        var findAlbum = albumRepository.findByTitleContainsIgnoreCase(
+            albumName
+        );
         var artist = findArtist();
 
-        album = new Album(albumName, artist);
-        artist.addAlbum(album);
-
-        artistRepository.save(artist);
-
-        ui.separatorWithText("Album registered");
-        return album;
-//        if (findAlbum.isPresent()) {
-//            ui.separatorWithText("album already exists");
-//            return album = findAlbum.get();
-//        } else {
-//            var artist = findArtist();
-//
-//            album = new Album(albumName, artist);
-//            artist.addAlbum(album);
-//
-//            artistRepository.save(artist);
-//
-//            ui.separatorWithText("Album registered");
-//            return album;
-//        }
+        if (findAlbum.isPresent()) {
+            ui.separatorWithText("album already exists");
+            return album = findAlbum.get();
+        } else {
+            album = new Album(albumName, artist);
+            albumRepository.save(album);
+            ui.separatorWithText("Album registered");
+            return album;
+        }
     }
 
-//    public Album findAlbum() {
-//        ui.optionInput("type name of the album to search");
-//        var albumName = scanner.nextLine();
-//        var albumFind = artistRepository.findAlbum(albumName);
-//        Album album;
-//
-//        if (albumFind.isEmpty()) {
-//            ui.optionInput("album not found, creating one...");
-//            album = registerAlbum();
-//        } else {
-//            album = albumFind.get();
-//        }
-//
-//        return album;
-//    }
+    public Album findAlbum() {
+        ui.optionInput("type name of the album to search");
+        var albumName = scanner.nextLine();
+        var albumFind = albumRepository.findByTitleContainsIgnoreCase(
+            albumName
+        );
+        Album album;
 
-//    public Song registerSong() {
-//        ui.optionInput("type name of the song");
-//        var songName = scanner.nextLine();
-//
-//        var findSong = artistRepository.findSong(songName);
-//        if (findSong.isPresent()) {
-//            ui.separatorWithText("song already exists");
-//            return findSong.get();
-//        } else {
-//            var artist = findArtist();
-//            var album = findAlbum();
-//
-//            var song = new Song(songName, artist);
-//            song.setAlbum(album);
-//            album.addSong(song);
-//
-//            artist.addAlbum(album);
-//            artist.addSong(song);
-//            artistRepository.save(artist);
-//
-//            ui.separatorWithText("Song registered");
-//            return song;
-//        }
-//    }
+        if (albumFind.isEmpty()) {
+            ui.optionInput("album not found, creating one...");
+            album = registerAlbum();
+        } else {
+            album = albumFind.get();
+        }
 
-//    private void listSongs() {
-//        var songs = artistRepository.findAllSongs();
-//        if (songs.isEmpty()){
-//            ui.separatorWithText("cannot find songs");
-//        }else {
-//            songs.forEach(System.out::println);
-//        }
-//    }
+        return album;
+    }
+
+    public Song registerSong() {
+        ui.optionInput("type name of the song");
+        var songName = scanner.nextLine();
+
+        var findSong = songRepository.findByNameContainsIgnoreCase(songName);
+        if (findSong.isPresent()) {
+            ui.separatorWithText("song already exists");
+            return findSong.get();
+        } else {
+            var artist = findArtist();
+            var album = findAlbum();
+
+            var song = new Song(songName, artist);
+            song.setAlbum(album);
+
+            songRepository.save(song);
+            ui.separatorWithText("Song registered");
+            return song;
+        }
+    }
+
+    private void listSongs() {
+        var songs = songRepository.findAll();
+        if (songs.isEmpty()) {
+            ui.separatorWithText("cannot find songs");
+        } else {
+            songs.forEach(s -> {
+                System.out.println(
+                    "Title: " +
+                    s.getName() +
+                    ", Artist: " +
+                    s.getArtist().getName() +
+                    ", Album: " +
+                    s.getAlbum().getTitle()
+                );
+            });
+        }
+    }
 
     private void searchSongsByArtist() {
-        System.out.println("Main.searchSongsByArtist");
+        ui.optionInput("type name of the artist");
+        var artistName = scanner.nextLine();
+        var findArtist = artistRepository.findByNameContainsIgnoreCase(
+            artistName
+        );
+
+        if (findArtist.isPresent()) {
+            var songList = songRepository.findByArtistId(
+                findArtist.get().getId()
+            );
+            songList.forEach(s -> {
+                System.out.println(
+                    "Title: " +
+                    s.getName() +
+                    ", Artist: " +
+                    s.getArtist().getName() +
+                    ", Album: " +
+                    s.getAlbum().getTitle()
+                );
+            });
+        }
     }
 
     private void findAboutArtist() {

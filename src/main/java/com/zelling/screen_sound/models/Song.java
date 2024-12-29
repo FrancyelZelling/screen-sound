@@ -56,16 +56,4 @@ public class Song {
     public void setAlbum(Album album) {
         this.album = album;
     }
-
-    @Override
-    public String toString() {
-        return (
-            "name: " +
-            this.name +
-            ", artist: " +
-            this.artist +
-            ", album: " +
-            this.album
-        );
-    }
 }

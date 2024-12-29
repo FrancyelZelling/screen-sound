@@ -1,7 +1,5 @@
 package com.zelling.screen_sound.models;
 
-import jakarta.persistence.Entity;
-
 public enum ArtistType {
     SOLO("single", "solo"),
     DUO("duo", "dupla"),
@@ -20,13 +18,12 @@ public enum ArtistType {
         for (ArtistType artistType : ArtistType.values()) {
             if (artistType.artistType.equalsIgnoreCase(text)) {
                 return artistType;
-            }
-            else if (artistType.artistTypeBR.equalsIgnoreCase(text)) {
+            } else if (artistType.artistTypeBR.equalsIgnoreCase(text)) {
                 return artistType;
             }
         }
         throw new IllegalArgumentException(
-                "Nenhuma categoria encontrada para a string fornecida: "
+            "Nenhuma categoria encontrada para a string fornecida: "
         );
     }
 }

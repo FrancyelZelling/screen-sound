@@ -17,7 +17,11 @@ public class Album {
     @ManyToOne
     private Artist artist;
 
-    @OneToMany(mappedBy = "album")
+    @OneToMany(
+        mappedBy = "album",
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
     private List<Song> songList = new ArrayList<>();
 
     public Album() {}
@@ -63,16 +67,15 @@ public class Album {
         this.songList.add(song);
         return this.songList;
     }
-
-    @Override
-    public String toString() {
-        return (
-            "title: " +
-            title +
-            ", artist: " +
-            artist +
-            ", songList: " +
-            songList
-        );
-    }
+    // @Override
+    // public String toString() {
+    //     return (
+    //         "title: " +
+    //         title +
+    //         ", artist: " +
+    //         artist +
+    //         ", songList: " +
+    //         songList
+    //     );
+    // }
 }

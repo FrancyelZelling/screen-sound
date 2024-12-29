@@ -1,13 +1,13 @@
 package com.zelling.screen_sound.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Artist implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -19,24 +19,25 @@ public class Artist implements Serializable {
     private ArtistType artistType;
 
     @OneToMany(
-            mappedBy = "artist",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
+        mappedBy = "artist",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.EAGER
     )
     private List<Album> albunsList = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "artist",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
+        mappedBy = "artist",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.EAGER
     )
     private List<Song> songList = new ArrayList<>();
 
-    public Artist(){};
-    public Artist(String name, String artistType){
+    public Artist() {}
+
+    public Artist(String name, String artistType) {
         this.name = name;
         this.artistType = ArtistType.fromText(artistType);
-    };
+    }
 
     public long getId() {
         return id;
@@ -83,9 +84,8 @@ public class Artist implements Serializable {
         this.albunsList.add(album);
         return this.albunsList;
     }
-
-    @Override
-    public String toString(){
-        return "name:" + this.name + ", type: " + this.artistType;
-    }
+    // @Override
+    // public String toString(){
+    //     return "name:" + this.name + ", type: " + this.artistType;
+    // }
 }
